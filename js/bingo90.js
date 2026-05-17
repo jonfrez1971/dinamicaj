@@ -195,15 +195,6 @@ function renderAdminPlayers() {
         // Admin List with Approve Buttons
         if(playerRole === 'admin') {
             let timerText = '';
-            if (p.status === 'pending') {
-                const now = Date.now();
-                const joined = p.joinedAt?.toMillis() || p.time || now;
-                const elapsed = now - joined;
-                const remaining = Math.max(0, (60 * 60 * 1000) - elapsed);
-                const mins = Math.floor(remaining / 60000);
-                const secs = Math.floor((remaining % 60000) / 1000);
-                timerText = `<span style="color:#ffaa00;">⏳ ${mins}m ${secs}s</span>`;
-            }
 
             adminListHTML += `<div class="player-row" style="flex-direction:column; align-items:flex-start;">
                 <div style="display:flex; justify-content:space-between; width:100%;">
@@ -392,18 +383,8 @@ document.getElementById('resetBtn')?.addEventListener('click', async () => {
 });
 
 async function cleanupExpiredPlayers() {
-    const now = Date.now();
-    const oneHour = 60 * 60 * 1000;
-    const snap = await db_bingo90.collection('players').where('status', '==', 'pending').get();
-    
-    snap.forEach(doc => {
-        const data = doc.data();
-        const joinedAt = data.joinedAt?.toMillis() || data.time; // Handle both types of timestamps
-        if (joinedAt && (now - joinedAt > oneHour)) {
-            console.log("Eliminando jugador expirado (90):", doc.id);
-            doc.ref.delete();
-        }
-    });
+    // Desactivado a petición del cliente para manejar limpieza manual
+    return;
 }
 
 window.onload = () => {
@@ -418,7 +399,7 @@ window.onload = () => {
 
     const board = document.getElementById('miniBoard'); if(board) { board.innerHTML = ''; for(let i=1; i<=90; i++) { const d = document.createElement('div'); d.className = 'mini-ball'; d.id = `mini-${i}`; d.textContent = i; board.appendChild(d); } }
     startSync();
-    cleanupExpiredPlayers();
-    setInterval(cleanupExpiredPlayers, 300000); // Cada 5 min
+    // cleanupExpiredPlayers(); // Desactivado
+    // setInterval(cleanupExpiredPlayers, 300000); // Desactivado
     setInterval(renderAdminPlayers, 1000); // Re-render timers
 };

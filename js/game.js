@@ -236,14 +236,6 @@ function renderPlayers() {
         const isPending = p.status === 'pendiente';
 
         let timeText = '';
-        if (isPending) {
-            const now = Date.now();
-            const elapsed = now - (p.time || now);
-            const remaining = Math.max(0, (60 * 60 * 1000) - elapsed);
-            const mins = Math.floor(remaining / 60000);
-            const secs = Math.floor((remaining % 60000) / 1000);
-            timeText = `<div style="font-size:0.6rem; color:#ffaa00; margin-bottom:5px;">⏳ Expira en: ${mins}m ${secs}s</div>`;
-        }
 
         card.innerHTML = `
             <div class="card-top">
@@ -632,22 +624,8 @@ function resetGameState() {
 window.resetGameState = resetGameState;
 
 function cleanupExpiredPlayers() {
-    if (!window.db_firebase) return;
-    const now = Date.now();
-    const oneHour = 60 * 60 * 1000;
-
-    window.db_firebase.collection("jugadores")
-        .where("status", "==", "pendiente")
-        .get()
-        .then(snap => {
-            snap.forEach(doc => {
-                const data = doc.data();
-                if (data.time && (now - data.time > oneHour)) {
-                    console.log("Eliminando jugador expirado:", data.name);
-                    doc.ref.delete();
-                }
-            });
-        });
+    // Desactivado a petición del cliente para manejar limpieza manual
+    return;
 }
 
 function init() {
@@ -681,8 +659,8 @@ function init() {
     setupFirebaseSync();
     createCageBalls();
     updateMasterBoardUI(); // Initialize with empty slots
-    cleanupExpiredPlayers();
-    setInterval(cleanupExpiredPlayers, 300000); // Check every 5 minutes
+    // cleanupExpiredPlayers(); // Desactivado
+    // setInterval(cleanupExpiredPlayers, 300000); // Desactivado
     setInterval(renderPlayers, 1000); // Refresh timers every second
 
     // Auto-fill name from registration

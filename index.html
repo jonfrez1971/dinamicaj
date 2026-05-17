@@ -235,6 +235,60 @@
         firebase.initializeApp(firebaseConfig);
         const db = firebase.firestore();
 
+        // Lógica de Registro Mandatorio
+        function checkRegistration() {
+            const userName = localStorage.getItem('bingo_user_name');
+            const userPhone = localStorage.getItem('bingo_user_phone');
+            
+            if (!userName || !userPhone) {
+                document.getElementById('regModal').classList.add('active');
+            }
+        }
+
+        async function handleRegistration(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const btn = e.target.querySelector('button');
+
+            if (!name || phone.length < 7) {
+                alert("Por favor, ingresa un nombre y un teléfono válido.");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = "REGISTRANDO...";
+
+            try {
+                // Guardar en Firestore como Lead
+                await db.collection('leads').add({
+                    nombre: name,
+                    telefono: phone,
+                    fecha: new Date().toISOString(),
+                    agente: navigator.userAgent
+                });
+
+                // Guardar localmente
+                localStorage.setItem('bingo_user_name', name);
+                localStorage.setItem('bingo_user_phone', phone);
+                // También para retrocompatibilidad con los juegos
+                localStorage.setItem('bingo_my_name', name);
+
+                document.getElementById('regModal').classList.remove('active');
+                
+                if ('speechSynthesis' in window) {
+                    const msg = new SpeechSynthesisUtterance(`Bienvenido ${name}. Ya puedes entrar a los juegos.`);
+                    msg.lang = 'es-ES';
+                    window.speechSynthesis.speak(msg);
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Error al registrar. Inténtalo de nuevo.");
+                btn.disabled = false;
+                btn.textContent = "REGISTRARME PARA JUGAR";
+            }
+        }
+
         // Lógica del Contador de Visitas
         const statsRef = db.collection('stats').doc('visitors');
 
@@ -258,7 +312,10 @@
             }
         }
 
-        updateCounter();
+        window.addEventListener('DOMContentLoaded', () => {
+            updateCounter();
+            checkRegistration();
+        });
 
         // Intro sound for the Lobby
         window.addEventListener('click', () => {
@@ -272,5 +329,115 @@
         }, { once: true });
     </script>
 
+    <!-- Modal de Registro -->
+    <div id="regModal" class="reg-overlay">
+        <div class="reg-content">
+            <div style="font-size: 3rem; margin-bottom: 20px;">👤</div>
+            <h2 style="font-size: 1.8rem; font-weight: 900; margin-bottom: 10px;">¡HOLA! BIENVENIDO</h2>
+            <p style="color: #aaa; margin-bottom: 25px;">Para ingresar a la plataforma, por favor regístrate con tu nombre y teléfono real.</p>
+            
+            <form onsubmit="handleRegistration(event)">
+                <input type="text" id="regName" placeholder="Tu nombre completo" required class="reg-input">
+                <input type="tel" id="regPhone" placeholder="Tu WhatsApp (ej: 321...)" required class="reg-input">
+                <button type="submit" class="btn-reg">REGISTRARME PARA JUGAR</button>
+            </form>
+            
+            <p style="font-size: 0.7rem; color: #555; margin-top: 20px;">* Al registrarte aceptas recibir información sobre los juegos y premios.</p>
+        </div>
+    </div>
+
+    <style>
+        .reg-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 5, 10, 0.95);
+            backdrop-filter: blur(15px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .reg-overlay.active { display: flex; animation: fadeIn 0.5s ease; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .reg-content {
+            background: linear-gradient(145deg, #0f0f1a 0%, #05050a 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 50px 40px;
+            border-radius: 40px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 20px rgba(138, 43, 226, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reg-content::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle at center, rgba(138, 43, 226, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .reg-content h2 {
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            background: linear-gradient(to bottom, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .reg-input {
+            width: 100%;
+            padding: 18px;
+            margin-bottom: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: white;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .reg-input:focus {
+            border-color: var(--secondary);
+            background: rgba(255,255,255,0.1);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+        }
+
+        .btn-reg {
+            width: 100%;
+            padding: 20px;
+            border-radius: 50px;
+            border: none;
+            background: var(--secondary);
+            color: black;
+            font-weight: 900;
+            font-size: 1rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(0, 240, 255, 0.3);
+        }
+
+        .btn-reg:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 240, 255, 0.5);
+            filter: brightness(1.1);
+        }
+
+        .btn-reg:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+    </style>
 </body>
 </html>

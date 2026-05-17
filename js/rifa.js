@@ -44,12 +44,7 @@ function selectNumber(num) {
         // ADMIN MODE: Show details
         if (isAdminMode) {
             const data = takenNumbers[num];
-            const now = Date.now();
-            const elapsed = now - (data.time || now);
-            const remaining = Math.max(0, (60 * 60 * 1000) - elapsed);
-            const mins = Math.floor(remaining / 60000);
-            
-            let timeInfo = data.status === 'pendiente' ? `\n⏳ Expira en: ${mins} minutos` : '';
+            let timeInfo = '';
             
             if (confirm(`Número: ${num}\nComprador: ${data.name}\nTel: ${data.phone || 'N/A'}${timeInfo}\n\n¿Deseas devolver este número al pozo?`)) {
                 db.collection("rifas_activas").doc("sorteo_actual").update({
@@ -159,35 +154,12 @@ function clearRifa() {
 window.clearRifa = clearRifa;
 
 async function cleanupExpiredNumbers() {
-    const now = Date.now();
-    const oneHour = 60 * 60 * 1000;
-    
-    const docRef = db.collection("rifas_activas").doc("sorteo_actual");
-    const doc = await docRef.get();
-    
-    if (doc.exists) {
-        const puestos = doc.data().puestos || {};
-        let changed = false;
-        const newPuestos = { ...puestos };
-        
-        Object.keys(puestos).forEach(num => {
-            const p = puestos[num];
-            if (p.status === 'pendiente' && p.time && (now - p.time > oneHour)) {
-                console.log("Liberando número expirado:", num);
-                delete newPuestos[num];
-                changed = true;
-            }
-        });
-        
-        if (changed) {
-            await docRef.update({ puestos: newPuestos });
-        }
-    }
+    // Desactivado a petición del cliente para manejar limpieza manual
+    return;
 }
 
 // Initialize
 updateLotteryInfo();
 initGrid();
 syncRifa();
-cleanupExpiredNumbers();
-setInterval(cleanupExpiredNumbers, 300000);
+// cleanupExpiredNumbers(); // Desactivado
