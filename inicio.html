@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dinamicas J - Casino Online</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;600;800;900&display=swap" rel="stylesheet">
+    
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-NYXKPH2SW3"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-NYXKPH2SW3');
+    </script>
+    <style>
+        :root {
+            --lobby-bg: #05050a;
+            --card-bg: rgba(255, 255, 255, 0.03);
+            --gold-glow: rgba(255, 215, 0, 0.3);
+        }
+
+        body {
+            background: 
+                linear-gradient(rgba(5, 5, 10, 0.8), rgba(5, 5, 10, 0.8)),
+                url('img/bingo_bg.png');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            margin: 0;
+            font-family: 'Outfit', sans-serif;
+            color: white;
+            overflow-x: hidden;
+        }
+
+        .lobby-hero {
+            height: 40vh;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            background: radial-gradient(circle at center, #1a1a3a 0%, #05050a 100%);
+            text-align: center;
+            padding: 20px;
+        }
+
+        .lobby-hero h1 {
+            font-size: 3.5rem;
+            font-weight: 900;
+            margin: 0;
+            background: linear-gradient(to bottom, #fff 30%, #888 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -2px;
+        }
+
+        .lobby-hero p {
+            color: var(--secondary);
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 4px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .games-grid {
+            max-width: 1200px;
+            margin: -50px auto 50px;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 30px;
+            padding: 20px;
+        }
+
+        .game-card {
+            background: var(--card-bg);
+            border: 1px solid rgba(255,255,255,0.1);
+            border-radius: 32px;
+            padding: 40px;
+            text-align: center;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            position: relative;
+            overflow: hidden;
+            backdrop-filter: blur(10px);
+        }
+
+        .game-card:hover {
+            transform: translateY(-15px) scale(1.02);
+            border-color: var(--secondary);
+            box-shadow: 0 20px 40px rgba(0,0,0,0.4), 0 0 20px var(--secondary-glow);
+        }
+
+        .game-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            display: block;
+        }
+
+        .game-card h2 {
+            font-size: 1.8rem;
+            font-weight: 800;
+            margin: 10px 0;
+        }
+
+        .game-card p {
+            font-size: 0.9rem;
+            color: #aaa;
+            line-height: 1.6;
+            margin-bottom: 25px;
+        }
+
+        .btn-play {
+            background: white;
+            color: black;
+            padding: 12px 30px;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 900;
+            text-transform: uppercase;
+            font-size: 0.8rem;
+            display: inline-block;
+            transition: 0.3s;
+        }
+
+        .game-card:hover .btn-play {
+            background: var(--secondary);
+            box-shadow: 0 0 15px var(--secondary);
+        }
+
+        /* Unique card colors */
+        .card-spress:hover { border-color: var(--accent); box-shadow: 0 0 30px var(--accent-glow); }
+        .card-spress .btn-play { background: var(--accent); color: white; }
+        
+        .card-bingo90:hover { border-color: #ffcc00; box-shadow: 0 0 30px rgba(255,204,0,0.3); }
+        .card-bingo90 .btn-play { background: #ffcc00; color: black; }
+
+        .card-rifa:hover { border-color: #00ff88; box-shadow: 0 0 30px rgba(0,255,136,0.3); }
+        .card-rifa .btn-play { background: #00ff88; color: black; }
+
+        .footer {
+            text-align: center;
+            padding: 40px;
+            color: #444;
+            font-size: 0.8rem;
+        }
+
+        .wa-float {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #25D366;
+            width: 60px; height: 60px;
+            border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.3);
+            text-decoration: none;
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="lobby-hero">
+        <p>Plataforma de Entretenimiento</p>
+        <h1>Dinamicas J</h1>
+    </div>
+
+    <div style="max-width: 1000px; margin: -20px auto 30px; background: rgba(255, 0, 0, 0.2); border: 2px solid #ff4444; border-radius: 15px; padding: 20px; text-align: center; backdrop-filter: blur(5px); z-index: 10; position: relative; box-shadow: 0 10px 30px rgba(255, 0, 0, 0.2);">
+        <h2 style="color: #ff5555; margin-top: 0; font-size: 1.5rem; font-weight: 900;">⚠️ AVISO IMPORTANTE</h2>
+        <p style="font-size: 1rem; line-height: 1.5; margin-bottom: 15px; color: #ddd;">Nuestro número de WhatsApp presenta bloqueos. Si tienes un <strong>pago pendiente</strong> o dudas sobre el juego, por favor contáctanos urgentemente a través de nuestro nuevo canal en Telegram para no perder tu cupo.</p>
+        <a href="https://t.me/Bingojonzu" target="_blank" style="display: inline-block; background: #0088cc; color: white; padding: 10px 25px; border-radius: 50px; text-decoration: none; font-weight: 900; font-size: 0.9rem; box-shadow: 0 0 15px rgba(0, 136, 204, 0.5);">💬 HABLAR POR TELEGRAM</a>
+    </div>
+
+    <div class="games-grid">
+        <!-- BINGO SPRESS -->
+        <div class="game-card card-spress" onclick="location.href='spress.html'">
+            <span class="game-icon">🎰</span>
+            <h2>Bingo Spress</h2>
+            <p>El clásico bingo de líneas. ¡Completa 5 números y llévate el acumulado que crece cada ronda!</p>
+            <a href="spress.html" class="btn-play">Jugar Ahora</a>
+        </div>
+
+        <!-- BINGO 90 -->
+        <div class="game-card card-bingo90" onclick="location.href='bingo90.html'">
+            <span class="game-icon">🎱</span>
+            <h2>Bingo 90 Pro</h2>
+            <p>Bingo estilo casino. Tres líneas de premios y el gran Gordo Final. ¡Lidera la mesa con tus cartones!</p>
+            <a href="bingo90.html" class="btn-play">Entrar a Mesa</a>
+        </div>
+
+        <!-- RIFAS -->
+        <div class="game-card card-rifa" onclick="location.href='rifa.html'">
+            <span class="game-icon">🎲</span>
+            <h2>Rifas 2 Cifras</h2>
+            <p>Elige tus números de la suerte y participa en los sorteos diarios con las loterías oficiales.</p>
+            <a href="rifa.html" class="btn-play">Comprar Cupo</a>
+        </div>
+    </div>
+
+    <div class="footer">
+        &copy; 2026 Dinamicas J - Juego Responsable. <br>
+        <div style="margin-top: 10px; opacity: 0.6;">
+            <a href="spress.html?admin=true" style="color: inherit; text-decoration: none; margin: 0 10px;">Admin Spress</a> |
+            <a href="bingo90.html?admin=true" style="color: inherit; text-decoration: none; margin: 0 10px;">Admin 90</a> |
+            <a href="rifa.html?admin=true" style="color: inherit; text-decoration: none; margin: 0 10px;">Admin Rifas</a>
+        </div>
+        <div id="visitorCounter" style="margin-top: 15px; font-size: 0.7rem; color: var(--secondary); font-weight: bold; opacity: 0.8;">
+            Cargando visitas...
+        </div>
+    </div>
+
+    <a href="https://t.me/Bingojonzu" class="wa-float" target="_blank" style="background: #0088cc;">
+        <img src="https://upload.wikimedia.org/wikipedia/commons/8/82/Telegram_logo.svg" width="30" alt="TG">
+    </a>
+
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+
+    <script>
+        // Configuración de Firebase (usando la misma de tus juegos)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCbmQuWhQlrgqJT-QhG7nf_BHaxcu_ZFVU",
+            authDomain: "bingo-7d78b.firebaseapp.com",
+            projectId: "bingo-7d78b",
+            storageBucket: "bingo-7d78b.firebasestorage.app",
+            messagingSenderId: "568411995628",
+            appId: "1:568411995628:web:e673de6940ee233ab654c9",
+            measurementId: "G-NYXKPH2SW3"
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore();
+
+        // Lógica de Registro Mandatorio
+        function checkRegistration() {
+            const userName = localStorage.getItem('bingo_user_name');
+            const userPhone = localStorage.getItem('bingo_user_phone');
+            
+            if (!userName || !userPhone) {
+                document.getElementById('regModal').classList.add('active');
+            }
+        }
+
+        async function handleRegistration(e) {
+            e.preventDefault();
+            const name = document.getElementById('regName').value.trim();
+            const phone = document.getElementById('regPhone').value.trim();
+            const btn = e.target.querySelector('button');
+
+            if (!name || phone.length < 7) {
+                alert("Por favor, ingresa un nombre y un teléfono válido.");
+                return;
+            }
+
+            btn.disabled = true;
+            btn.textContent = "REGISTRANDO...";
+
+            try {
+                // Guardar en Firestore como Lead
+                await db.collection('leads').add({
+                    nombre: name,
+                    telefono: phone,
+                    fecha: new Date().toISOString(),
+                    agente: navigator.userAgent
+                });
+
+                // Guardar localmente
+                localStorage.setItem('bingo_user_name', name);
+                localStorage.setItem('bingo_user_phone', phone);
+                // También para retrocompatibilidad con los juegos
+                localStorage.setItem('bingo_my_name', name);
+
+                document.getElementById('regModal').classList.remove('active');
+                
+                if ('speechSynthesis' in window) {
+                    const msg = new SpeechSynthesisUtterance(`Bienvenido ${name}. Ya puedes entrar a los juegos.`);
+                    msg.lang = 'es-ES';
+                    window.speechSynthesis.speak(msg);
+                }
+            } catch (err) {
+                console.error(err);
+                alert("Error al registrar. Inténtalo de nuevo.");
+                btn.disabled = false;
+                btn.textContent = "REGISTRARME PARA JUGAR";
+            }
+        }
+
+        // Lógica del Contador de Visitas
+        const statsRef = db.collection('stats').doc('visitors');
+
+        async function updateCounter() {
+            try {
+                // Incrementar el contador en la base de datos
+                await statsRef.set({
+                    total: firebase.firestore.FieldValue.increment(1)
+                }, { merge: true });
+
+                // Escuchar cambios para mostrar el total actualizado
+                statsRef.onSnapshot((doc) => {
+                    if (doc.exists) {
+                        const total = doc.data().total || 0;
+                        document.getElementById('visitorCounter').innerHTML = `👥 TOTAL DE VISITAS: ${total.toLocaleString()}`;
+                    }
+                });
+            } catch (error) {
+                console.error("Error en contador:", error);
+                document.getElementById('visitorCounter').style.display = 'none';
+            }
+        }
+
+        window.addEventListener('DOMContentLoaded', () => {
+            updateCounter();
+            checkRegistration();
+        });
+
+        // Intro sound for the Lobby
+        window.addEventListener('click', () => {
+            if ('speechSynthesis' in window && !window.welcomeSaid) {
+                const msg = new SpeechSynthesisUtterance("Bienvenido a Dinamicas Jota. Elige tu juego favorito y prepárate para ganar.");
+                msg.lang = 'es-ES';
+                msg.rate = 0.9;
+                window.speechSynthesis.speak(msg);
+                window.welcomeSaid = true;
+            }
+        }, { once: true });
+    </script>
+
+    <!-- Modal de Registro -->
+    <div id="regModal" class="reg-overlay">
+        <div class="reg-content">
+            <div style="font-size: 3rem; margin-bottom: 20px;">👤</div>
+            <h2 style="font-size: 1.8rem; font-weight: 900; margin-bottom: 10px;">¡HOLA! BIENVENIDO</h2>
+            <p style="color: #aaa; margin-bottom: 25px;">Para ingresar a la plataforma, por favor regístrate con tu nombre y teléfono real.</p>
+            
+            <form onsubmit="handleRegistration(event)">
+                <input type="text" id="regName" placeholder="Tu nombre completo" required class="reg-input">
+                <input type="tel" id="regPhone" placeholder="Tu WhatsApp (ej: 321...)" required class="reg-input">
+                <button type="submit" class="btn-reg">REGISTRARME PARA JUGAR</button>
+            </form>
+            
+            <p style="font-size: 0.7rem; color: #555; margin-top: 20px;">* Al registrarte aceptas recibir información sobre los juegos y premios.</p>
+        </div>
+    </div>
+
+    <style>
+        .reg-overlay {
+            position: fixed;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(5, 5, 10, 0.95);
+            backdrop-filter: blur(15px);
+            z-index: 9999;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .reg-overlay.active { display: flex; animation: fadeIn 0.5s ease; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+        .reg-content {
+            background: linear-gradient(145deg, #0f0f1a 0%, #05050a 100%);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 50px 40px;
+            border-radius: 40px;
+            max-width: 450px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 30px 60px rgba(0,0,0,0.8), 0 0 20px rgba(138, 43, 226, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .reg-content::before {
+            content: '';
+            position: absolute;
+            top: -50%; left: -50%; width: 200%; height: 200%;
+            background: radial-gradient(circle at center, rgba(138, 43, 226, 0.1) 0%, transparent 70%);
+            pointer-events: none;
+        }
+
+        .reg-content h2 {
+            font-size: 2.2rem;
+            font-weight: 900;
+            margin-bottom: 10px;
+            background: linear-gradient(to bottom, #fff, #888);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .reg-input {
+            width: 100%;
+            padding: 18px;
+            margin-bottom: 20px;
+            border-radius: 16px;
+            border: 1px solid rgba(255,255,255,0.1);
+            background: rgba(255,255,255,0.05);
+            color: white;
+            font-family: inherit;
+            font-size: 1rem;
+            transition: all 0.3s;
+            outline: none;
+        }
+
+        .reg-input:focus {
+            border-color: var(--secondary);
+            background: rgba(255,255,255,0.1);
+            box-shadow: 0 0 15px rgba(0, 240, 255, 0.2);
+        }
+
+        .btn-reg {
+            width: 100%;
+            padding: 20px;
+            border-radius: 50px;
+            border: none;
+            background: var(--secondary);
+            color: black;
+            font-weight: 900;
+            font-size: 1rem;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 10px 20px rgba(0, 240, 255, 0.3);
+        }
+
+        .btn-reg:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 30px rgba(0, 240, 255, 0.5);
+            filter: brightness(1.1);
+        }
+
+        .btn-reg:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+            transform: none;
+        }
+    </style>
+</body>
+</html>
